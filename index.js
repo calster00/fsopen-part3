@@ -30,6 +30,14 @@ app.get('/', (request, response) => {
   response.send('<h1>Phonebook part3</h1>');
 });
 
+app.get('/info', (request, response) => {
+  const time = new Date().toLocaleString();
+  response.send(`
+    <p>Phonebook has info for ${persons.length} people</p>
+    <p>${time}</p>
+  `);
+});
+
 app.get('/api/persons', (request, response) => {
   response.json(persons);
 });
@@ -49,14 +57,26 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id;
   persons = persons.filter(p => p.id != id);
   response.status(204).end();
-})
+});
 
-app.get('/info', (request, response) => {
-  const time = new Date().toLocaleString();
-  response.send(`
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${time}</p>
-  `);
+app.post('/api/persons', (request, response) => {
+  const body = request.body;
+  const newID = Math.floor(Math.random() * 1e6);
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'name missing'
+    });
+  }
+
+  const newPerson = {
+    name: body.name,
+    number: body.number,
+    id: newID
+  };
+  
+  persons = persons.concat(newPerson);
+  response.json(newPerson);
 });
 
 const PORT = 3001;

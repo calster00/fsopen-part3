@@ -2,8 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 const app = express();
 
+// morgan expects a format string, so we need to stringify object, otherwise
+// toString() will be called implicitly and we'll get "[object Object]"
+morgan.token('data', (req, res) => JSON.stringify(req.body));
+
 app.use(express.json());
-app.use(morgan('tiny'));
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :data')
+);
 
 let persons = [
   {

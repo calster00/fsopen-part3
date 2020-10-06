@@ -69,6 +69,18 @@ app.post('/api/persons', (request, response) => {
     });
   }
 
+  if (!body.number) {
+    return response.status(400).json({
+      error: 'number missing'
+    });
+  }
+
+  if (persons.findIndex(p => p.name === body.name) != -1) {
+    return response.status(400).json({
+      error: 'contact already exists'
+    });
+  }
+
   const newPerson = {
     name: body.name,
     number: body.number,

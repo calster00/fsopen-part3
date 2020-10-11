@@ -7,6 +7,7 @@ const cors = require('cors');
 // toString() will be called implicitly and we'll get "[object Object]"
 morgan.token('data', (req, res) => JSON.stringify(req.body));
 
+app.use(express.static('build'));
 app.use(cors());
 app.use(express.json());
 app.use(
@@ -101,7 +102,7 @@ app.post('/api/persons', (request, response) => {
   response.json(newPerson);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -20,6 +20,16 @@ app.get("/", (request, response) => {
   response.send("<h1>Phonebook part3</h1>");
 });
 
+app.get("/info", (request, response) => {
+  Person.find({}).then((persons) => {
+    const time = new Date().toLocaleString();
+    response.send(`
+      <p>Phonebook has info for ${persons.length} people</p>
+      <p>${time}</p>
+    `);
+  });
+});
+
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
     response.json(persons);
@@ -46,6 +56,21 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch(next);
 });
 
+app.put("/api/persons/:id", (request, response, next) => {
+  const { name, number } = request.body;
+
+  const person = {
+    name,
+    number,
+  };
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch(next);
+});
+
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
@@ -60,12 +85,6 @@ app.post("/api/persons", (request, response) => {
       error: "number missing",
     });
   }
-
-  // if (persons.findIndex(p => p.name === body.name) != -1) {
-  //   return response.status(400).json({
-  //     error: 'contact already exists'
-  //   });
-  // }
 
   const newPerson = new Person({
     name: body.name,

@@ -7,7 +7,7 @@ const Person = require("./models/person");
 
 // morgan expects a format string, so we need to stringify object, otherwise
 // toString() will be called implicitly and we'll get "[object Object]"
-morgan.token("data", (req, res) => JSON.stringify(req.body));
+morgan.token("data", (req) => JSON.stringify(req.body));
 
 app.use(express.static("build"));
 app.use(cors());
@@ -50,7 +50,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch(next);
